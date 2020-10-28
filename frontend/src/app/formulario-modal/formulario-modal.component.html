@@ -8,21 +8,21 @@
   <form [formGroup]="formulario">
     <div class="form-row">
       <div class="form-label-group col-md-4">
-        <input type="text" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoCedula').errors && formulario.get('campoCedula').dirty}" id="cedula" formControlName="campoCedula" autofocus>
+        <input placeholder="Cedula" type="text" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoCedula').errors && formulario.get('campoCedula').dirty}" id="cedula" formControlName="campoCedula" autofocus>
         <label for="cedula">Cédula</label>
       </div>
       <div class="form-label-group col-md-8">
-        <input type="text" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoNombre').errors && formulario.get('campoNombre').dirty}" id="nombre" formControlName="campoNombre">
+        <input placeholder="Nombre" type="text" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoNombre').errors && formulario.get('campoNombre').dirty}" id="nombre" formControlName="campoNombre">
         <label for="nombre">Nombre</label>
       </div>
     </div>
     <div class="form-row">
       <div class="form-label-group col-md-3">
-        <input type="number" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoEdad').errors && formulario.get('campoEdad').dirty}" id="edad" formControlName="campoEdad">
+        <input placeholder="Edad" type="number" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoEdad').errors && formulario.get('campoEdad').dirty}" id="edad" formControlName="campoEdad">
         <label for="edad">Edad</label>
       </div>
       <div class="form-label-group col-md-9">
-        <input type="text" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoCiudad').errors && formulario.get('campoCiudad').dirty}" id="ciudad" formControlName="campoCiudad">
+        <input placeholder="Cuidad" type="text" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoCiudad').errors && formulario.get('campoCiudad').dirty}" id="ciudad" formControlName="campoCiudad">
         <label for="ciudad">Ciudad</label>
       </div>
     </div>

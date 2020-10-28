@@ -8,7 +8,9 @@ import com.sophos.logger.repository.LoggerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
@@ -21,6 +23,8 @@ public class LoggerService {
 	private final LoggerRepository loggerRepository;
 	private final RabbitService rabbitService;
 	private final ObjectMapper objectMapper;
+	private final EmitterProcessor<LogResponse> processor;
+	private final FluxSink<LogResponse> sink;
 
 	public LoggerService(LoggerRepository loggerRepository, RabbitService rabbitService) {
 		this.loggerRepository = loggerRepository;
@@ -28,10 +32,19 @@ public class LoggerService {
 
 		objectMapper = new ObjectMapper();
 		objectMapper.findAndRegisterModules();
+
+		processor = EmitterProcessor.create();
+		sink = processor.sink();
 	}
 
 	public Flux<LogResponse> getAll() {
 		return loggerRepository.getAll();
+	}
+
+	public Flux<LogResponse> stream() {
+		return processor
+			.doOnNext(logResponse -> LOGGER.info("Sink: {}", logResponse.getCodigo()))
+		;
 	}
 
 	@PostConstruct
@@ -40,7 +53,9 @@ public class LoggerService {
 			.doOnNext(this::logDelivery)
 			.flatMap(delivery -> Mono.fromCallable(() -> objectMapper.readValue(delivery.getBody(), LogRequest.class)))
 			.flatMap(loggerRepository::save)
-			.subscribe(this::logSaving)
+			.doOnNext(this::logSaving)
+			.doOnNext(sink::next)
+			.subscribe()
 		;
 	}
 
@@ -52,11 +67,11 @@ public class LoggerService {
 		);
 	}
 
-	private void logSaving(LogRequest logRequest) {
+	private void logSaving(LogResponse logResponse) {
 		LOGGER.info(
 			"Log registrado con éxito -> Tipo: {} - ID: {}",
-				logRequest.getMetodo(),
-				logRequest.getCodigo()
+				logResponse.getMetodo(),
+				logResponse.getCodigo()
 		);
 	}
 

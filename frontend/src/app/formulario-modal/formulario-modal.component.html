@@ -1,0 +1,37 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ textoGuardar }} empleado</h4>
+  <button type="button" class="close" aria-label="Close" (click)="formularioModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="formulario">
+    <div class="form-row">
+      <div class="form-label-group col-md-4">
+        <input type="text" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoCedula').errors && formulario.get('campoCedula').dirty}" id="cedula" formControlName="campoCedula" autofocus>
+        <label for="cedula">Cédula</label>
+      </div>
+      <div class="form-label-group col-md-8">
+        <input type="text" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoNombre').errors && formulario.get('campoNombre').dirty}" id="nombre" formControlName="campoNombre">
+        <label for="nombre">Nombre</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label-group col-md-3">
+        <input type="number" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoEdad').errors && formulario.get('campoEdad').dirty}" id="edad" formControlName="campoEdad">
+        <label for="edad">Edad</label>
+      </div>
+      <div class="form-label-group col-md-9">
+        <input type="text" [ngClass]="{'form-control': true, 'is-invalid': formulario.get('campoCiudad').errors && formulario.get('campoCiudad').dirty}" id="ciudad" formControlName="campoCiudad">
+        <label for="ciudad">Ciudad</label>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="formularioModal.dismiss('Cancel click')">Cancelar</button>
+  <button type="button" class="btn btn-primary" ngbAutofocus [disabled]="formulario.invalid" (click)="guardar()">
+    <span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true" *ngIf="procesando"></span>
+    {{ textoGuardar }}
+  </button>
+</div>

@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  urlApi: '#{URL_API}#'
+  urlApiEmpleados: '#{URL_API_EMPLEADOS}#',
+  urlApiLogger: '#{URL_API_LOGGER}#'
 };

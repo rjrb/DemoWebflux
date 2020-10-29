@@ -8,10 +8,11 @@ import {FaIconLibrary, FontAwesomeModule} from '@fortawesome/angular-fontawesome
 import {ListaEmpleadosComponent} from './lista-empleados/lista-empleados.component';
 import {HttpClientModule} from "@angular/common/http";
 import {ReactiveFormsModule} from "@angular/forms";
-import {faEdit, faTrashAlt, faUserFriends, faUserPlus} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faStream, faTrashAlt, faUserFriends, faUserPlus} from "@fortawesome/free-solid-svg-icons";
 import { FormularioModal } from './formulario-modal/formulario-modal.component';
 import { AlertaModal } from './alerta-modal/alerta-modal.component';
 import { ConfirmacionModal } from './confirmacion-modal/confirmacion-modal.component';
+import { LoggerComponent } from './logger/logger.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ConfirmacionModal } from './confirmacion-modal/confirmacion-modal.compo
     ListaEmpleadosComponent,
     FormularioModal,
     AlertaModal,
-    ConfirmacionModal
+    ConfirmacionModal,
+    LoggerComponent
   ],
   imports: [
     BrowserModule,
@@ -39,6 +41,7 @@ export class AppModule {
       faUserPlus,
       faEdit,
       faTrashAlt,
+      faStream,
     );
   }
 }

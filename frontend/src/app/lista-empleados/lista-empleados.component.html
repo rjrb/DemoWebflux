@@ -43,6 +43,7 @@
     <div class="form-group form-inline">
       <label for="buscar">Buscar:</label>
       <input class="form-control ml-2" id="buscar" type="search" [formControl]="campoBuscar"/>
+      <a target="_blank" [routerLink]="['/logger']" class="ml-2">Ver el log</a>
     </div>
   </form>
   <ngb-alert *ngIf="mensajeExito" type="success" (close)="mensajeExito = ''">{{ mensajeExito }}</ngb-alert>

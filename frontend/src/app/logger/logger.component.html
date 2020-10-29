@@ -1,0 +1,35 @@
+<div class="container mt-5 pt-5 px-5 pb-3 border shadow rounded">
+  <div class="mb-4 d-flex justify-content-between">
+    <div>
+      <fa-icon icon="stream" size="2x"></fa-icon>
+      <span class="font-weight-bolder ml-3 h2">Log de eventos</span>
+      <div class="spinner-border text-info ml-3" role="status" *ngIf="procesando">
+        <span class="sr-only">Procesando...</span>
+      </div>
+    </div>
+  </div>
+  <div class="table-responsive mb-2">
+    <table class="table table-striped table-hover">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Fecha</th>
+        <th scope="col">Responsable</th>
+        <th scope="col">Método</th>
+        <th scope="col">Código</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let log of listaLogs; index as i">
+        <td>{{ i + 1 }}</td>
+        <td>{{ log.fecha }}</td>
+        <td>{{ log.responsable | titlecase }}</td>
+        <td>{{ log.metodo | uppercase }}</td>
+        <td>{{ log.codigo | lowercase }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <ngb-alert *ngIf="mensajeExito" type="success" (close)="mensajeExito = ''">{{ mensajeExito }}</ngb-alert>
+  <ngb-alert *ngIf="mensajeError" type="warning" (close)="mensajeError = ''">{{ mensajeError }}</ngb-alert>
+</div>

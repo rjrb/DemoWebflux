@@ -31,7 +31,7 @@ public class LoggerController {
 	@GetMapping("/sse")
 	public Flux<ServerSentEvent<LogResponse>> stream() {
 		return Flux.interval(Duration.ofSeconds(1))
-			.onBackpressureDrop()
+			.onBackpressureBuffer()
 			.flatMap(interval -> loggerService.stream())
 			.map(logResponse ->
 				ServerSentEvent.<LogResponse>builder()

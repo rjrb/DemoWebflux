@@ -10,7 +10,7 @@ import {EmpleadoRequest} from "../interfaces/empleado-request";
 })
 export class EmpleadosService {
 
-  private url = `${environment.urlApi}/empleados`;
+  private url = `${environment.urlApiEmpleados}`;
 
   constructor(private http: HttpClient) { }
 

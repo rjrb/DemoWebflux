@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  urlApi: 'http://localhost:8080'
+  urlApiEmpleados: 'http://localhost:8080/empleados',
+  urlApiLogger: 'http://localhost:8081/logger'
 };
 
 /*

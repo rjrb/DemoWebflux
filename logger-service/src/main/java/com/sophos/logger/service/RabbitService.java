@@ -33,7 +33,7 @@ public class RabbitService {
 
 	@PostConstruct
 	public void init() {
-		amqpAdmin.declareQueue(new Queue(queue, false, false, true));
+		amqpAdmin.declareQueue(new Queue(queue, true, false, false));
 	}
 
 	@PreDestroy

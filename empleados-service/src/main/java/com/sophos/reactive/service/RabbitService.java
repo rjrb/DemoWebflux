@@ -5,6 +5,7 @@ import com.rabbitmq.client.Connection;
 import com.sophos.reactive.beans.LogRequest;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,7 +20,8 @@ import java.util.Objects;
 @Service
 public class RabbitService {
 
-	private static final String QUEUE = "reactor.rabbitmq";
+	@Value("${reactive.logger.queue:reactor.rabbitmq}")
+	private String queue;
 
 	private final AmqpAdmin amqpAdmin;
 	private final Mono<Connection> connectionMono;
@@ -38,7 +40,7 @@ public class RabbitService {
 
 	@PostConstruct
 	public void init() {
-		amqpAdmin.declareQueue(new Queue(QUEUE, false, false, true));
+		amqpAdmin.declareQueue(new Queue(queue, true, false, false));
 	}
 
 	@PreDestroy
@@ -47,7 +49,7 @@ public class RabbitService {
 	}
 
 	public Flux<OutboundMessageResult> send(LogRequest logRequest) {
-		return Mono.fromCallable(() -> new OutboundMessage("", QUEUE, objectMapper.writeValueAsBytes(logRequest)))
+		return Mono.fromCallable(() -> new OutboundMessage("", queue, objectMapper.writeValueAsBytes(logRequest)))
 			.flatMapMany(outboundMessage -> sender.sendWithPublishConfirms(Flux.just(outboundMessage)))
 			.filter(OutboundMessageResult::isAck)
 		;

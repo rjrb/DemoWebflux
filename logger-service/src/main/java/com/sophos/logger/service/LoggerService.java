@@ -8,13 +8,12 @@ import com.sophos.logger.repository.LoggerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service
 public class LoggerService {
@@ -23,8 +22,7 @@ public class LoggerService {
 	private final LoggerRepository loggerRepository;
 	private final RabbitService rabbitService;
 	private final ObjectMapper objectMapper;
-	private final EmitterProcessor<LogResponse> processor;
-	private final FluxSink<LogResponse> sink;
+	private final ConcurrentLinkedQueue<LogResponse> eventQueue;
 
 	public LoggerService(LoggerRepository loggerRepository, RabbitService rabbitService) {
 		this.loggerRepository = loggerRepository;
@@ -33,8 +31,7 @@ public class LoggerService {
 		objectMapper = new ObjectMapper();
 		objectMapper.findAndRegisterModules();
 
-		processor = EmitterProcessor.create();
-		sink = processor.sink();
+		eventQueue = new ConcurrentLinkedQueue<>();
 	}
 
 	public Flux<LogResponse> getAll() {
@@ -42,8 +39,10 @@ public class LoggerService {
 	}
 
 	public Flux<LogResponse> stream() {
-		return processor
-			.doOnNext(logResponse -> LOGGER.info("Sink: {}", logResponse.getCodigo()))
+		return Flux.fromArray(eventQueue.toArray(new LogResponse[] {}))
+			.switchIfEmpty(Mono.empty())
+			.doOnNext(logResponse -> LOGGER.info("Stream: {}", logResponse.getCodigo()))
+			.doOnComplete(eventQueue::clear)
 		;
 	}
 
@@ -54,7 +53,7 @@ public class LoggerService {
 			.flatMap(delivery -> Mono.fromCallable(() -> objectMapper.readValue(delivery.getBody(), LogRequest.class)))
 			.flatMap(loggerRepository::save)
 			.doOnNext(this::logSaving)
-			.doOnNext(sink::next)
+			.doOnNext(eventQueue::add)
 			.subscribe()
 		;
 	}

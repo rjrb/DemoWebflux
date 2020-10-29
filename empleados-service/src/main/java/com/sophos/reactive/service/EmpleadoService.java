@@ -49,7 +49,7 @@ public class EmpleadoService {
 	public Mono<Empleado> post(Empleado request) {
 		return Mono.just(request)
 			.map(this::mapAndValidateRequest)
-			.flatMap(empleado -> empleadoRepository.findByCedula(empleado.getCedula()))
+			.flatMap(empleado -> findByCedula(empleado.getCedula()))
 			.flatMap(empleado -> Mono.error(new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe la cédula '" + request.getCedula() + "'")))
 			.cast(Empleado.class)
 			.switchIfEmpty(empleadoRepository.save(request))
@@ -61,7 +61,7 @@ public class EmpleadoService {
 	public Mono<Empleado> put(UUID codigo, Empleado request) {
 		return Mono.just(request)
 			.map(this::mapAndValidateRequest)
-			.flatMap(empleado -> empleadoRepository.findByCedula(empleado.getCedula()))
+			.flatMap(empleado -> findByCedula(empleado.getCedula()))
 			.filter(empleado -> !codigo.equals(empleado.getCodigo()))
 			.flatMap(empleado -> Mono.error(new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe la cédula '" + request.getCedula() + "'")))
 			.switchIfEmpty(empleadoRepository.findById(codigo))
@@ -83,18 +83,17 @@ public class EmpleadoService {
 	}
 
 	public Flux<Empleado> search(String query) {
-		final String like = "%" + query.strip() + "%";
+		return empleadoRepository.findByCedulaContainingIgnoreCaseOrNombreContainingIgnoreCaseOrCiudadContainingIgnoreCase(query, query, query);
+	}
+
+	private Mono<Empleado> findByCedula(String cedula) {
 		return databaseClient
 			.select()
 			.from(Empleado.class)
-			.matching(
-				Criteria.where("cedula").like(like)
-					.or("nombre").like(like)
-					.or("ciudad").like(like)
-			)
+			.matching(Criteria.where("cedula").is(cedula))
 			.orderBy(Sort.Order.asc("cedula"))
 			.as(Empleado.class)
-			.all()
+			.one()
 		;
 	}
 

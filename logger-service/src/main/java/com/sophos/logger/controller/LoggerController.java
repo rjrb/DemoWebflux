@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
+import java.time.Duration;
 import java.util.UUID;
 
 @RestController
@@ -29,7 +30,9 @@ public class LoggerController {
 
 	@GetMapping("/sse")
 	public Flux<ServerSentEvent<LogResponse>> stream() {
-		return loggerService.stream()
+		return Flux.interval(Duration.ofSeconds(1))
+			.onBackpressureDrop()
+			.flatMap(interval -> loggerService.stream())
 			.map(logResponse ->
 				ServerSentEvent.<LogResponse>builder()
 					.data(logResponse)

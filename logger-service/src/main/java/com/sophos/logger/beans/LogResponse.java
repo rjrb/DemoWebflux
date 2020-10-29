@@ -11,6 +11,5 @@ public class LogResponse {
 	private String responsable;
 	private String metodo;
 	private String codigo;
-	private Empleado entidad;
 
 }

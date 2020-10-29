@@ -41,7 +41,7 @@ public class LoggerRepository {
 				)
 			)
 			.scanIndexForward(false)
-			.limit(20)
+			.limit(10)
 			.build()
 		;
 

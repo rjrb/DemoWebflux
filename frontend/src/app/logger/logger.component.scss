@@ -1,0 +1,18 @@
+em{
+    font-size: 12px;
+}
+.metodo_GET , .metodo_POST , .metodo_PUT , .metodo_DELETE{
+    background: no-repeat padding-box #9215B3;
+    border-radius: 32px;
+    color: #fff;
+    padding: 3px 10px;
+}
+.metodo_DELETE{
+    background: no-repeat padding-box #F2B011;
+}
+.metodo_POST{
+    background: no-repeat padding-box #0096CC;
+}
+.metodo_PUT{
+    background: no-repeat padding-box #05F29B;
+}

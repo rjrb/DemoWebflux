@@ -30,7 +30,9 @@ export class LoggerComponent implements OnInit {
 
     this.loggerService.getLogEvents().subscribe(event => {
       console.log(event);
-      this.listaLogs.pop();
+      if(this.listaLogs.length >= 10) {
+        this.listaLogs.pop();
+      }
       this.listaLogs.unshift(JSON.parse(event.data));
     })
   }

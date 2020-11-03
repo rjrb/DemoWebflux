@@ -2,7 +2,7 @@ package com.sophos.reactive.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Connection;
-import com.sophos.reactive.beans.LogRequest;
+import com.sophos.reactive.beans.LogRegistry;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +48,7 @@ public class RabbitService {
 		Objects.requireNonNull(connectionMono.block()).close();
 	}
 
-	public Flux<OutboundMessageResult> send(LogRequest logRequest) {
+	public Flux<OutboundMessageResult> send(LogRegistry logRequest) {
 		return Mono.fromCallable(() -> new OutboundMessage("", queue, objectMapper.writeValueAsBytes(logRequest)))
 			.flatMapMany(outboundMessage -> sender.sendWithPublishConfirms(Flux.just(outboundMessage)))
 			.filter(OutboundMessageResult::isAck)

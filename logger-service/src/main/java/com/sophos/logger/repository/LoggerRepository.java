@@ -63,14 +63,12 @@ public class LoggerRepository {
 	}
 
 	public Mono<LogResponse> save(LogRequest logRequest) {
-		final LocalDateTime ahora =  LocalDateTime.now();
-
 		final PutItemRequest putItemRequest = PutItemRequest.builder()
 			.tableName(TABLA_DYNAMO)
 			.item(
 				Map.of(
 					"tipo", AttributeValue.builder().s("LOG").build(),
-					"fecha", AttributeValue.builder().s(ahora.format(DTF)).build(),
+					"fecha", AttributeValue.builder().s(logRequest.getFecha().format(DTF)).build(),
 					"responsable", AttributeValue.builder().s(logRequest.getResponsable()).build(),
 					"metodo", AttributeValue.builder().s(String.valueOf(logRequest.getMetodo())).build(),
 					"codigo", AttributeValue.builder().s(String.valueOf(logRequest.getCodigo())).build(),
@@ -84,13 +82,13 @@ public class LoggerRepository {
 		return Mono.fromCompletionStage(dynamoDbAsyncClient.putItem(putItemRequest))
 			.doOnError(e -> LOGGER.error("Error registrando log en DynamoDB: {}", e.getLocalizedMessage()))
 			.onErrorStop()
-			.map(putItemResponse -> mapLogRequestToLogResponse(logRequest, ahora))
+			.map(putItemResponse -> mapLogRequestToLogResponse(logRequest))
 		;
 	}
 
-	private LogResponse mapLogRequestToLogResponse(LogRequest logRequest, LocalDateTime ahora) {
+	private LogResponse mapLogRequestToLogResponse(LogRequest logRequest) {
 		final LogResponse logResponse = new LogResponse();
-		logResponse.setFecha(ahora);
+		logResponse.setFecha(logRequest.getFecha());
 		logResponse.setResponsable(logRequest.getResponsable());
 		logResponse.setMetodo(logRequest.getMetodo());
 		logResponse.setCodigo(logRequest.getCodigo());

@@ -1,6 +1,6 @@
 package com.sophos.reactive.service;
 
-import com.sophos.reactive.beans.LogRequest;
+import com.sophos.reactive.beans.LogRegistry;
 import com.sophos.reactive.model.Empleado;
 import com.sophos.reactive.repository.EmpleadoRepository;
 import com.sophos.reactive.utils.Utilidades;
@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -110,7 +111,7 @@ public class EmpleadoService {
 
 	private Mono<Empleado> queueLog(String metodo, Empleado empleado) {
 		return Mono.just(empleado)
-			.map(empleadoMono -> mapLogRequest(metodo, empleadoMono))
+			.map(empleadoMono -> mapLogRegistry(metodo, empleadoMono))
 			.flatMapMany(rabbitService::send)
 			.doOnError(error -> LOGGER.error("Error encolando el mensaje del log", error))
 			.doOnNext(result -> LOGGER.info("Mensaje enviado -> Cola: {} - Tipo: {} - ID: {}", result.getOutboundMessage().getRoutingKey(), metodo, empleado.getCodigo()))
@@ -119,13 +120,14 @@ public class EmpleadoService {
 		;
 	}
 
-	private LogRequest mapLogRequest(String metodo, Empleado empleado) {
-		final LogRequest logRequest = new LogRequest();
-		logRequest.setResponsable(RESPONSABLE);
-		logRequest.setMetodo(metodo);
-		logRequest.setCodigo(empleado.getCodigo().toString());
-		logRequest.setEntidad(empleado);
-		return logRequest;
+	private LogRegistry mapLogRegistry(String metodo, Empleado empleado) {
+		final LogRegistry logRegistry = new LogRegistry();
+		logRegistry.setFecha(LocalDateTime.now());
+		logRegistry.setResponsable(RESPONSABLE);
+		logRegistry.setMetodo(metodo);
+		logRegistry.setCodigo(empleado.getCodigo().toString());
+		logRegistry.setEntidad(empleado);
+		return logRegistry;
 	}
 
 }
